@@ -289,8 +289,7 @@ wtm = {
 		}
 		return 'unknown';
 	},
-
-	const read_barcode = () => {
+	read_barcode = () => {
 		let bc = document.querySelector('img[alt="Scan me!"]');
 		let canvas = false;
 
