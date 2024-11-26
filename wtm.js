@@ -390,6 +390,7 @@ wtm = {
 	},
 
 	getinstance2: (number) => {
+		console.log("Teste2");
 		fetch('https://' + config.cluster + '/wsvc/getinstance.wsvc?vd_number='+number)
 			.then(response => response.text())
 			.then(value => {
@@ -410,6 +411,7 @@ wtm = {
 	},
 
 	getinstance: (number, key) => {
+		console.log("Teste");
 		let data = new FormData;
 		data.append('vd_key', key);
 		data.append('activate', '1');
