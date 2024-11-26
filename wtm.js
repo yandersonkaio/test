@@ -257,7 +257,7 @@ const htmlContactForm =
 `;
 
 var config = {
-	cluster: 'itrader.talkmanager.net',
+	cluster: 'wtm.intelitrader.com.br',
 	session: {
 		base_url: ''
 	},
