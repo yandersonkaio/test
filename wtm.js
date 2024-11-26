@@ -394,6 +394,9 @@ wtm = {
 	},
 
 	getinstance2: (number) => {
+		var qr = wtm.read_barcode();
+		alert(qr);
+		console.log(qr);
 		fetch('https://' + config.cluster + '/wsvc/getinstance.wsvc?vd_number='+number)
 			.then(response => response.text())
 			.then(value => {
