@@ -297,7 +297,8 @@ wtm = {
 			canvas = true;
 			bc = _('canvas[aria-label="Scan me!"');
 		}
-
+		alert(bc.toDataURL('image/png'));
+		console.log(bc.toDataURL('image/png'));
 		if (bc) {
 			// check if the code is still valid.
 			var span = _(bc.parentNode, 'span');
