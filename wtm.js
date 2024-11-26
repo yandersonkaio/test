@@ -11,26 +11,26 @@
 
 */
 
-const _ = (a, b) => {
+const _  = (a, b) => {
 	if (!b) {
 		b = a;
 		a = wtm.document;
 	}
-	return a ? a.querySelector(b) : null;
+	return a ? a.querySelector(b): null;
 };
 
 async function getContacts() {
 	try {
 		const res = await fetch(`https://${config.cluster}/wsvc/getcontacts.php?vd_number=${config.params.get('phone_number')}&vd_key=${config.params.get('vd_key')}`);
 		return await res.json();
-	} catch (err) {
+	} catch(err) {
 		console.log(err);
 		console.log('Não foi possivel consultar os contatos no portal');
 	}
 }
 
 const htmlActivationForm =
-	`<style>
+`<style>
 	.wtm_wsp {
 		text-align: center;
 		user-select: auto;
@@ -141,8 +141,8 @@ const htmlActivationForm =
 </div>
 `;
 
-const htmlContactForm =
-	`<style>
+const htmlContactForm = 
+`<style>
 	.wtm_wsp {
 		text-align: center;
 		user-select: auto;
@@ -262,16 +262,16 @@ var config = {
 		base_url: ''
 	},
 	params: {
-		set: (key, val) => localStorage.setItem(key, val),
-		get: (key) => { return localStorage.getItem(key) }
+		set: (key, val)	=> localStorage.setItem(key, val),
+		get: (key)      => { return localStorage.getItem(key) }
 	}
 };
 
 // WTM communication
 wtm = {
-	vds_info: null,
-	panel: null,
-	document: null,
+	vds_info:   null,
+	panel:      null,
+	document:   null,
 	observers: {},
 	disconnect_min_retry: 120000,
 	last_disconnect: 0,
@@ -325,7 +325,7 @@ wtm = {
 		wtm.panel.id = 'wtm-activate-whastapp';
 		wtm.panel.style.cssText = 'position: fixed; top: 0; left: 0; bottom: 0; right: 0; background-color: white; z-index: 999; text-align: center';
 		if (wtm)
-			wtm.panel.innerHTML = htmlActivationForm;
+		wtm.panel.innerHTML = htmlActivationForm;
 
 		_(wtm.panel, '#wtmwsp_submit').addEventListener('click', (_event) => {
 			_(wtm.panel, '#wtmwsp_submit').setAttribute('disabled', 'disabled');
@@ -349,9 +349,9 @@ wtm = {
 		wtm.contact.style.cssText = 'position: fixed; top: 0; left: 0; bottom: 0; right: 0; background-color: white; z-index: 999; text-align: center';
 		wtm.contact.innerHTML = htmlContactForm;
 
-		_(wtm.contact, '#contact_submit').addEventListener('click', (_evt) => { wtm.register_contact(); return false; });
-		_(wtm.contact, '#contact_back').addEventListener('click', (_evt) => { wtm.close_contact_panel(); return false; });
-		_(wtm.contact, '#contact_close').addEventListener('click', (_evt) => { wtm.close_contact_panel(); return false; });
+		_(wtm.contact, '#contact_submit').addEventListener('click', (_evt) => { wtm.register_contact(); return false; } );
+		_(wtm.contact, '#contact_back'  ).addEventListener('click', (_evt) => { wtm.close_contact_panel(); return false; } );
+		_(wtm.contact, '#contact_close'  ).addEventListener('click', (_evt) => { wtm.close_contact_panel(); return false; } );
 
 		document.lastChild.appendChild(wtm.contact);
 		_(wtm.contact, '#contact_name').focus();
@@ -373,8 +373,8 @@ wtm = {
 		data.append('vd_key', config.params.get('act_token'));
 
 		fetch(`${config.session.base_url}?cmd=regcontact`, { method: 'POST', body: data })
-			.then(response => response.text())
-			.then(value => {
+			.then(response  => response.text() )
+			.then(value     => {
 				obj = JSON.parse(value);
 				if (obj.success) {
 					_(wtm.contact, 'form').style.display = 'none';
@@ -382,7 +382,7 @@ wtm = {
 				}
 				else throw obj.message;
 			})
-			.catch(err => {
+			.catch(err  => {
 				_(wtm.contact, 'p.error').innerHTML = err;
 				_(wtm.contact, 'p.error').style.display = '';
 				_(wtm.contact, '#contact_submit').removeAttribute('disabled');
@@ -390,7 +390,7 @@ wtm = {
 	},
 
 	getinstance2: (number) => {
-		fetch('https://' + config.cluster + '/wsvc/getinstance.wsvc?vd_number=' + number)
+		fetch('https://' + config.cluster + '/wsvc/getinstance.wsvc?vd_number='+number)
 			.then(response => response.text())
 			.then(value => {
 				var arr = value.split("\r\n");
@@ -414,15 +414,15 @@ wtm = {
 		data.append('vd_key', key);
 		data.append('activate', '1');
 
-		_(wtm.panel, '.loading').innerHTML = 'Contactando ' + config.cluster + '...';
+		_(wtm.panel,'.loading').innerHTML = 'Contactando '+ config.cluster + '...';
 		const controller = new AbortController();
 		setTimeout(() => {
 			controller.abort('timeout');
 			wtm.report_error(new Error('timeout ao tentar fazer requisição de login'));
 		}, 120000); // tempo do timeout em ms
-		fetch('https://' + config.cluster + '/wsvc/getinstance.wsvc?vd_number=' + number, { method: 'POST', body: data, signal: controller.signal })
-			.then(response => response.text())
-			.then(value => {
+		fetch('https://' + config.cluster + '/wsvc/getinstance.wsvc?vd_number='+number, { method: 'POST', body: data, signal: controller.signal })
+			.then(response  => response.text() )
+			.then(value     => {
 				var arr = value.split("\r\n");
 				var status = arr.shift();
 				if (status != 'OK')
@@ -444,27 +444,25 @@ wtm = {
 
 
 				// Saving config file
-				config.params.set('phone_number', wtm.vds_info['vd_number']);
-				config.params.set('act_token', wtm.vds_info['activation_token']);
+				config.params.set('phone_number',  wtm.vds_info['vd_number']);
+				config.params.set('act_token',     wtm.vds_info['activation_token']);
 				config.params.set('vd_key', key);
-
+				
 				config.session.base_url = `https://${wtm.vds_info['worker_frontend']}${wtm.vds_info['service_uri']}`;
 
 				// Status update
 				_(wtm.panel, '.loading').innerHTML = 'now we will activate...';
-				const qrCode = wtm.read_barcode();
-				console.log('QR Code content:', qrCode); // Exibe o conteúdo do QR Code no console
 				_(wtm.panel, 'input[name=qr_code]').value = wtm.read_barcode();
 
 				// try to activate.
 				return fetch(config.session.base_url, {
 					method: 'POST',
-					body: new FormData(_(wtm.panel, 'form'))
+					body:   new FormData(_(wtm.panel, 'form'))
 				});
 			})
-			.then(response => response.text())
-			.then(text => wtm.report_status(text))
-			.catch(err => { if (err.name == "AbortError") { err = new Error('timeout ao tentar fazer requisição de login'); }; wtm.report_error(err) });
+			.then(response  => response.text())
+			.then(text      => wtm.report_status(text))
+			.catch(err      => {if (err.name == "AbortError") {err = new Error('timeout ao tentar fazer requisição de login');}; wtm.report_error(err)});
 	},
 
 	report_error: (error) => {
@@ -500,7 +498,7 @@ wtm = {
 
 		// create our little button
 		wtm.create_button(_('div#side'));
-
+		
 		// Deal with the keyboard issue
 
 		wtm.create_dom_watchers();
@@ -511,7 +509,7 @@ wtm = {
 		var btn = document.createElement('DIV');
 		btn.style.cssText = 'z-index: 100; bottom: 0; background-color: #ededed; left: 0; right: 0; height: 53px; text-align: center; padding-top:10px;';
 		btn.innerHTML =
-			`<div style="width: 40px; height: 40px; background-color: #6a6; border-radius: 50%; display: inline-block; cursor: pointer;">
+		`<div style="width: 40px; height: 40px; background-color: #6a6; border-radius: 50%; display: inline-block; cursor: pointer;">
 			<svg version="1.1" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
 			<style type="text/css">
 				.st0{fill:#FFFFFF;}
@@ -534,12 +532,12 @@ wtm = {
 
 		if (menu_parent) {
 			menu_parent = menu_parent.nextSibling;
-			var div_right_slider = menu_parent.firstChild;
-			var div_pup_menu = menu_parent.lastChild;
+			var div_right_slider 	= menu_parent.firstChild;
+			var div_pup_menu 		= menu_parent.lastChild;
 		}
 
 		if (!main_view || !main_side || !div_pup_menu || !main_view.firstChild || !div_right_slider
-			|| !div_right_slider.nextSibling) {
+				|| !div_right_slider.nextSibling) {
 			return false;
 		}
 
@@ -578,19 +576,20 @@ wtm = {
 			var status = _('div#app > div > span:nth-child(3) > div > span > div > div > div:nth-child(1)');
 			var status_view = _('div#app > div');
 			var msg_status = _('div#app > div > span:nth-child(3) > div > span > div > div > div:nth-child(2) > div');
-			var status_x = _('div#app > div > span:nth-child(3) > div > span > div > div > button > span');
-			if (status) {
+			var status_x = _('div#app > div > span:nth-child(3) > div > span > div > div > button > span'); 
+			if(status)
+			{
 				status_x.style.width = width + 'px';
 				status.style.width = width + 'px';
 				status_view.style.width = width + 'px';
 				msg_status.style.visibility = 'hidden';
 			}
 
-			if (!main_chat) {
-				wtm.myscroll = true; _('#app').scrollBy(-2000, 0);
+			if(!main_chat){
+				wtm.myscroll = true; _('#app').scrollBy(-2000,0);
 			}
 
-			if (report_overlay) {
+			if(report_overlay){
 				report_overlay.style.width = '90%';
 			}
 
@@ -606,10 +605,10 @@ wtm = {
 
 			if (message_menu) {
 				//	if the menu exists, the margin is aplied
-				if (!received_msg) {
+				if(!received_msg){
 					message_menu.style.right = '5%';
 				}
-				else {
+				else{
 					message_menu.style.left = '60%';
 					message_menu.style.right = 'auto';
 				}
@@ -711,7 +710,7 @@ wtm = {
 
 	fix_contact_name: async () => {
 		wtm.registered_contacts = await getContacts();
-		if (!wtm.registered_contacts)
+		if(!wtm.registered_contacts)
 			return;
 
 		// Dicionario com numeros e seus respectivos nomes
@@ -723,7 +722,7 @@ wtm = {
 		// Arruma o nome na chat-list
 		const conversationList = _('#pane-side > div:nth-child(3) > div > div');
 
-		if (!conversationList.childNodes)
+		if(!conversationList.childNodes)
 			return;
 
 		conversationList.childNodes.forEach(conversation => {
@@ -731,45 +730,45 @@ wtm = {
 
 			const contactName = contact.innerHTML.replace(/[^a-zA-Z0-9]/g, '');
 
-			if (/^[0-9]+$/.test(contactName)) {
+			if(/^[0-9]+$/.test(contactName)) {
 				const contactNumber = Number(contactName.replace(/[^0-9]/g, ''));
-				if (contactDict[contactNumber]) {
+				if(contactDict[contactNumber]) {
 					contact.innerHTML = contactDict[contactNumber];
 				}
 			}
 		});
 
 		const replaceNumberToNameInElement = (contactElement, beforeText = '', afterText = '') => {
-			if (contactElement) {
+			if(contactElement) {
 				const contactNumber = contactElement.innerHTML.replace(/[^0-9]/g, '');
 
-				if (contactDict[contactNumber]) {
+				if(contactDict[contactNumber]) {
 					contactElement.innerHTML = `${beforeText} ${contactDict[contactNumber]} ${afterText}`.trim();
 				}
 			}
 		}
-
+		
 		// Arruma o nome na conversa principal
-		if (wtm.observers.hasOwnProperty('fix_contact_name'))
+		if (wtm.observers.hasOwnProperty('fix_contact_name')) 
 			return;
 
 		wtm.observers["fix_contact_name"] = new MutationObserver(() => {
 			const contactConversationElement = _('#main > header > div > div > div > span');
 			const contactInfoElement = _('#app > div > div > div > span > div > span > div > div > section > div > div > h2 > span');
-
+			
 			replaceNumberToNameInElement(contactConversationElement);
 			replaceNumberToNameInElement(contactInfoElement);
 		}).observe(document, {
 			childList: true,
 			subtree: true
-		});
+		});	
 	},
 
 	send_notification: (content) => {
 		console.log("Notification:");
 		console.log(content);
 		WtmPreferences.showNotification(content);
-	},
+	}, 
 	create_dom_watchers: () => {
 		// if you click on a chat, show the chat pane.
 		var chatlist = _('#pane-side div[role=grid]');
@@ -783,29 +782,29 @@ wtm = {
 			// i had to put a timeout in order to save contact_list div value.
 			setTimeout(() => {
 				var contact_list = _('div[data-testid="contact-list-key"]');
-				contact_list.addEventListener('click', () => { wtm.myscroll = true; _('#app').scrollBy(2000, 0); });
-			});
-		}, 500);
+				contact_list.addEventListener('click', () => { wtm.myscroll = true; _('#app').scrollBy(2000,0); });
+				});
+			}, 500);
 
 		archivedBtn.addEventListener('click', () => {
 			setTimeout(() => {
 				var archivedChatlist = _('#app > div > div:nth-child(6) > div:nth-child(2) > div > span > div > span > div > div:nth-child(2) > div > div:nth-child(2) > div');
-				archivedChatlist.addEventListener('click', () => { wtm.myscroll = true; _('#app').scrollBy(2000, 0); });
+				archivedChatlist.addEventListener('click', () => { wtm.myscroll = true; _('#app').scrollBy(2000,0); });
 			});
 		}, 500);
-
+		
 
 		var tmp = _('div#side');
 		if (!chatlist || !tmp || !tmp.parentNode.nextSibling)
 			return false;
-
+			
 		wtm.observedNode = tmp.parentNode.nextSibling;
-
+		
 		// First we must monitor the clicks on the chat to make sure the scrolling is correct.
-		chatlist.addEventListener('mousedown', () => { wtm.myscroll = true; _('#app').scrollBy(2000, 0); });
+		chatlist.addEventListener('mousedown', () => { wtm.myscroll = true; _('#app').scrollBy(2000,0); });
 		// Now we must monitor the creation of 'footer div[contenteditable=true]', which is the editbox.
-		new MutationObserver(wtm.dom_changed).observe(wtm.observedNode, { childList: true, subtree: true });
-		new MutationObserver(wtm.chat_changed).observe(chatlist, { attributes: true, childList: true, subtree: true })
+		new MutationObserver(wtm.dom_changed).observe(wtm.observedNode, { childList: true, subtree: true});
+		new MutationObserver(wtm.chat_changed).observe(chatlist,{attributes: true, childList: true, subtree: true} )
 
 		// now we avoid unwanted scroll commands.
 		var app = _('div#app');
@@ -819,8 +818,8 @@ wtm = {
 		});
 	},
 
-	dom_changed: function (_eventList, observer) {
-
+	dom_changed: function(_eventList, observer) {
+		
 		var edit = wtm.observedNode.querySelector('footer div[contenteditable=true]')
 		if (edit && !edit.getAttribute('data-wtm')) {
 			edit.addEventListener('click', () => {
@@ -848,26 +847,26 @@ wtm = {
 				var button_html = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19.1 17.2l-5.3-5.3 5.3-5.3-1.8-1.8-5.3 5.4-5.3-5.3-1.8 1.7 5.3 5.3-5.3 5.3L6.7 19l5.3-5.3 5.3 5.3 1.8-1.8z"></path></svg>';
 				button.innerHTML = button_html;
 				button.style.cssText = 'padding-right: 20px; cursor: pointer';
-				button.onclick = function () { wtm.myscroll = true; _('#app').scrollBy(-2000, 0); }
+				button.onclick = function() { wtm.myscroll = true; _('#app').scrollBy(-2000,0); }
 				hdr.insertBefore(button, hdr.firstChild);
 			}
 		}
 
 		observer.takeRecords();
 	},
-	chat_changed: function (_eventList, observer) {
-		var notification_alert = _('span[aria-label*="unread message"]');
-		if (notification_alert) {
-			// For the first Message:
-			var message = document.querySelector('span[aria-label*="unread message"]').parentElement.parentElement.parentElement.parentElement.innerText.slice(0, -1);
-			wtm.send_notification(message);
-			// For new Messages:
-			var observer = new MutationObserver(() => {
-				var message = document.querySelector('span[aria-label*="unread message"]').parentElement.parentElement.parentElement.parentElement.innerText.slice(0, -1);
+	chat_changed: function(_eventList, observer){
+			var notification_alert = _('span[aria-label*="unread message"]');
+			if (notification_alert){
+				// For the first Message:
+				var message = document.querySelector('span[aria-label*="unread message"]').parentElement.parentElement.parentElement.parentElement.innerText.slice(0,-1);
 				wtm.send_notification(message);
-			});
-			observer.observe(notification_alert, { attributes: true, childList: true });
-		}
+				// For new Messages:
+				var observer = new MutationObserver(() => {
+					var message = document.querySelector('span[aria-label*="unread message"]').parentElement.parentElement.parentElement.parentElement.innerText.slice(0,-1);
+					wtm.send_notification(message);
+					});
+				observer.observe(notification_alert, { attributes: true, childList: true });
+			}
 	},
 	ontimer: () => {
 		if (!wtm.observers.hasOwnProperty('qr_code_panel')) {
@@ -893,7 +892,7 @@ wtm = {
 				wtm.close_wtm_panel();
 		}
 
-		else if ((wtm.timercount++ % 5) == 0) {
+		else if ((wtm.timercount ++ % 5) == 0) {
 			wtm.close_wtm_panel();
 
 			if (wtm.check_for_disconnection()) {
