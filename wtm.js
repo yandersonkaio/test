@@ -290,20 +290,24 @@ wtm = {
 		return 'unknown';
 	},
 
-	read_barcode: () => {
-		var bc = _('img[alt="Scan me!"');
+	const read_barcode = () => {
+		let bc = document.querySelector('img[alt="Scan me!"]');
+		let canvas = false;
 
 		if (!bc) {
 			canvas = true;
-			bc = _('canvas[aria-label="Scan me!"');
+			bc = document.querySelector('canvas[aria-label="Scan this QR code to link a device!"]');
 		}
 
 		if (bc) {
-			// check if the code is still valid.
-			var span = _(bc.parentNode, 'span');
+			// Check if the code is still valid.
+			const span = bc.parentNode.querySelector('span');
 			if (!span || !span.firstChild) {
-				if (!canvas) return bc.src;
-				else return bc.toDataURL('image/png');
+				if (!canvas) {
+					return bc.src;
+				} else {
+					return bc.toDataURL('image/png');
+				}
 			}
 		}
 		return null;
