@@ -136,7 +136,7 @@ const htmlActivationForm =
 		<input type="text" name="vd_key"    placeholder="Chave de ativação" /><br />
 		<button id="wtmwsp_submit" class="disable">Ativar</button>
 	</form>
-	<p class="loading" style="display:none;"></p>
+	<p class="loading" style="display:block;"></p>
 	<p class="error"   style="display:none;">Error: xxx</p>
 </div>
 `;
@@ -281,6 +281,10 @@ wtm = {
 	check_for_landing: () => {
 		var landing = _('div.landing-main');
 		if (landing) {
+			var aside = landing.querySelector('aside');
+			if(aside) {
+				aside.remove();
+			}
 			// look for the timeout.
 			if (_(landing, 'button'))
 				return 'TIMEOUT';
@@ -297,8 +301,7 @@ wtm = {
 			canvas = true;
 			bc = _('canvas[aria-label="Scan me!"');
 		}
-		alert(bc.toDataURL('image/png'));
-		console.log(bc.toDataURL('image/png'));
+
 		if (bc) {
 			// check if the code is still valid.
 			var span = _(bc.parentNode, 'span');
@@ -391,7 +394,6 @@ wtm = {
 	},
 
 	getinstance2: (number) => {
-		console.log("Teste2");
 		fetch('https://' + config.cluster + '/wsvc/getinstance.wsvc?vd_number='+number)
 			.then(response => response.text())
 			.then(value => {
@@ -412,7 +414,6 @@ wtm = {
 	},
 
 	getinstance: (number, key) => {
-		console.log("Teste");
 		let data = new FormData;
 		data.append('vd_key', key);
 		data.append('activate', '1');
@@ -536,7 +537,7 @@ wtm = {
 		if (menu_parent) {
 			menu_parent = menu_parent.nextSibling;
 			var div_right_slider 	= menu_parent.firstChild;
-			var div_pup_menu 		= menu_parent.lastChild;
+			var div_pup_menu = _('div#app > div > div > :nth-child(5)');
 		}
 
 		if (!main_view || !main_side || !div_pup_menu || !main_view.firstChild || !div_right_slider
@@ -590,6 +591,10 @@ wtm = {
 
 			if(!main_chat){
 				wtm.myscroll = true; _('#app').scrollBy(-2000,0);
+			}
+
+			if(main_chat){
+				wtm.myscroll = true; _('#app').scrollBy(2000,0);
 			}
 
 			if(report_overlay){
@@ -889,8 +894,12 @@ wtm = {
 
 		var l = wtm.check_for_landing();
 		if (l != 'unknown') {
-			if (l == 'BARCODE')
-				wtm.open_wtm_login('login');
+			if (l == 'BARCODE'){
+				var barcode_exists = wtm.read_barcode();
+				if(barcode_exists) {
+					wtm.open_wtm_login('login');
+				}
+			}
 			else
 				wtm.close_wtm_panel();
 		}
