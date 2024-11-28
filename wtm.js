@@ -6,12 +6,13 @@
 //const theme_handler = require('./utils/theme_handler');
 const g_app_version = "2.8.0";
 
-let browserTitle;
+//let browserTitle;
 
-document.addEventListener('DOMContentLoaded', () => {
-    browserTitle = document.title;
-    init();
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//     browserTitle = document.title;
+
+//     init();
+// });
 
 const _ = (a, b) => {
     if (!b) {
@@ -1058,5 +1059,7 @@ wtm = {
     // open_chat_view: view_old_chats.open_chat_view,
     // close_chat_view: view_old_chats.close_chat_view,
 }
+
+wtm.init(document);
 
 //module.exports = wtm;
