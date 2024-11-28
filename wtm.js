@@ -8,11 +8,11 @@ const g_app_version = "2.8.0";
 
 //let browserTitle;
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     browserTitle = document.title;
+document.addEventListener('DOMContentLoaded', () => {
+    browserTitle = document.title;
 
-//     init();
-// });
+    //init();
+});
 
 const _ = (a, b) => {
     if (!b) {
