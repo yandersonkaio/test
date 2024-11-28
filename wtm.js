@@ -6,7 +6,7 @@
 //const theme_handler = require('./utils/theme_handler');
 const g_app_version = "2.8.0";
 
-//let browserTitle;
+let browserTitle;
 
 document.addEventListener('DOMContentLoaded', () => {
     browserTitle = document.title;
