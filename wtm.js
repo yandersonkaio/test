@@ -280,21 +280,24 @@ wtm = {
 
     check_for_landing: () => {
         let landing = _('div.landing-main');
-        if (landing) {
-            let aside = landing.querySelector('aside');
-            if (aside) {
-                aside.remove();
-            }
-            // look for the timeout.
-            if (_(landing, 'button')) {
-                return 'TIMEOUT';
-            }
+        console.log("VALOR PARA LANDING >>>>>>>>>>>>>>>>>>>>>>>> ", landing);
+        // if (landing) {
+        //     let aside = landing.querySelector('aside');
+        //     if (aside) {
+        //         aside.remove();
+        //     }
+        //     // look for the timeout.
+        //     if (_(landing, 'button')) {
+        //         return 'TIMEOUT';
+        //     }
 
-            else if (!!wtm.read_barcode()) {
-                return 'BARCODE';
-            }
-        }
-        return 'unknown';
+        //     else if (!!wtm.read_barcode()) {
+        //         return 'BARCODE';
+        //     }
+        // }
+        // return 'unknown';
+
+        return 'BARCODE';
     },
 
     read_barcode: () => {
