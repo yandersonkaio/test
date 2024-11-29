@@ -136,7 +136,7 @@ const htmlActivationForm =
 		<input type="text" name="vd_key"    placeholder="Chave de ativação" /><br />
 		<button id="wtmwsp_submit" class="disable">Ativar</button>
 	</form>
-	<p class="loading" style="display:none;"></p>
+	<p class="loading" style="display:block;"></p>
 	<p class="error"   style="display:none;">Error: xxx</p>
 </div>
 `;
@@ -257,7 +257,7 @@ const htmlContactForm =
 `;
 
 var config = {
-	cluster: 'itrader.talkmanager.net',
+	cluster: 'wtm-wpp.talkmanager.net',
 	session: {
 		base_url: ''
 	},
@@ -279,35 +279,46 @@ wtm = {
 	registered_contacts: {},
 
 	check_for_landing: () => {
-		var landing = _('div.landing-main');
+		let landing = _('div.landing-main');
 		if (landing) {
+			let aside = landing.querySelector('aside');
+			if (aside) {
+				aside.remove();
+			}
 			// look for the timeout.
-			if (_(landing, 'button'))
+			if (_(landing, 'button')) {
 				return 'TIMEOUT';
-			else
+			}
+
+			else if (!!wtm.read_barcode()) {
 				return 'BARCODE';
+			}
 		}
 		return 'unknown';
 	},
 
 	read_barcode: () => {
-		var bc = _('img[alt="Scan me!"');
+		let bc = _('img[alt="Scan me!"');
 
 		if (!bc) {
 			canvas = true;
-			bc = _('canvas[aria-label="Scan me!"');
+			bc = _('canvas[aria-label="Scan me!"') || _('canvas[aria-label="Scan this QR code to link a device!"');
 		}
 
 		if (bc) {
 			// check if the code is still valid.
-			var span = _(bc.parentNode, 'span');
+			let span = _(bc.parentNode, 'span');
 			if (!span || !span.firstChild) {
-				if (!canvas) return bc.src;
-				else return bc.toDataURL('image/png');
+				if (!canvas) {
+					return bc.src;
+				} else {
+					return bc.toDataURL('image/png');
+				}
 			}
 		}
 		return null;
 	},
+
 	check_for_disconnection: () => {
 		let disc = _('span[data-testid=alert-phone]');
 		return disc != null;
@@ -452,8 +463,6 @@ wtm = {
 
 				// Status update
 				_(wtm.panel, '.loading').innerHTML = 'now we will activate...';
-				const qrCode = wtm.read_barcode();
-				console.log('QR Code content:', qrCode); // Exibe o conteúdo do QR Code no console
 				_(wtm.panel, 'input[name=qr_code]').value = wtm.read_barcode();
 
 				// try to activate.
@@ -535,7 +544,7 @@ wtm = {
 		if (menu_parent) {
 			menu_parent = menu_parent.nextSibling;
 			var div_right_slider = menu_parent.firstChild;
-			var div_pup_menu = menu_parent.lastChild;
+			var div_pup_menu = _('div#app > div > div > :nth-child(5)');
 		}
 
 		if (!main_view || !main_side || !div_pup_menu || !main_view.firstChild || !div_right_slider
@@ -588,6 +597,10 @@ wtm = {
 
 			if (!main_chat) {
 				wtm.myscroll = true; _('#app').scrollBy(-2000, 0);
+			}
+
+			if (main_chat) {
+				wtm.myscroll = true; _('#app').scrollBy(2000, 0);
 			}
 
 			if (report_overlay) {
@@ -887,8 +900,12 @@ wtm = {
 
 		var l = wtm.check_for_landing();
 		if (l != 'unknown') {
-			if (l == 'BARCODE')
-				wtm.open_wtm_login('login');
+			if (l == 'BARCODE') {
+				var barcode_exists = wtm.read_barcode();
+				if (barcode_exists) {
+					wtm.open_wtm_login('login');
+				}
+			}
 			else
 				wtm.close_wtm_panel();
 		}
