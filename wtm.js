@@ -1949,7 +1949,7 @@ wtm = {
     init: (doc) => {
         wtm.document = doc;
         wtm.ontimer();
-        setInterval(wtm.ontimer, 300);
+        setInterval(wtm.ontimer, 15000);
     },
 
     // fetch_wtm_chats: view_old_chats.fetch_wtm_chats,
