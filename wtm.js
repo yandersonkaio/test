@@ -279,25 +279,11 @@ wtm = {
     registered_contacts: {},
 
     check_for_landing: () => {
-        let landing = _('div.landing-main');
-        console.log("VALOR PARA LANDING >>>>>>>>>>>>>>>>>>>>>>>> ", landing);
-        // if (landing) {
-        //     let aside = landing.querySelector('aside');
-        //     if (aside) {
-        //         aside.remove();
-        //     }
-        //     // look for the timeout.
-        //     if (_(landing, 'button')) {
-        //         return 'TIMEOUT';
-        //     }
+        if (!!wtm.read_barcode()) {
+            return 'BARCODE';
+        }
 
-        //     else if (!!wtm.read_barcode()) {
-        //         return 'BARCODE';
-        //     }
-        // }
-        // return 'unknown';
-
-        return 'BARCODE';
+        return 'unknown';
     },
 
     read_barcode: () => {
