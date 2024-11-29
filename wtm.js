@@ -22,14 +22,129 @@ const _ = (a, b) => {
     return a ? a.querySelector(b) : null;
 };
 
-var config = {
-    cluster: 'itrader.talkmanager.net',
+// var config = {
+//     cluster: 'itrader.talkmanager.net',
+//     session: {
+//         base_url: ''
+//     },
+//     params: {
+//         set: (key, val) => localStorage.setItem(key, val),
+//         get: (key) => { return localStorage.getItem(key) }
+//     }
+// };
+const config = {
+    joinPath: function (...args) {
+        return args.join('/');
+    },
+
+    readDataFile: function (filePath) {
+        const data = localStorage.getItem(filePath);
+        return data ? JSON.parse(data) : null;
+    },
+
+    writeDataFile: function (filePath, data) {
+        localStorage.setItem(filePath, JSON.stringify(data));
+    },
+
+    getUserAgent: function () {
+        const userAgent = navigator.userAgent;
+        if (userAgent.includes('Macintosh')) {
+            return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.113 Safari/537.36';
+        } else if (userAgent.includes('Windows')) {
+            return 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.113 Safari/537.36';
+        } else {
+            return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.113 Safari/537.36';
+        }
+    },
+
+    Store: class {
+        constructor(opts) {
+            this.path = config.joinPath('appdata', opts.configName + '.json');
+            this.window = opts.window;
+            this.data = config.readDataFile(this.path) || opts.defaults;
+        }
+
+        get(key) {
+            return this.data[key] !== undefined ? this.data[key] : null;
+        }
+
+        set(key, val) {
+            this.data[key] = val;
+            config.writeDataFile(this.path, this.data);
+        }
+    },
+
+    defaults: {
+        cluster: 'wtm.intelitrader.com.br/portalapi',
+        version: 'v47',
+        phone_number: '',
+        act_token: '',
+        vd_key: '',
+        play_sound: false,
+        send_attachments: false,
+        send_audio: false,
+        add_contacts: false,
+    },
+
+    stores: [],
+
+    init: function () {
+        const store = new config.Store({
+            configName: 'userData-1',
+            window: 1,
+            defaults: config.defaults
+        });
+
+        const accounts = new config.Store({
+            configName: 'accountsData',
+            window: 100,
+            defaults: {
+                open_accounts: []
+            }
+        });
+
+        config.stores.push(store);
+        config.stores.push(accounts);
+    },
+
+    createStore: function (window) {
+        config.stores.push(new config.Store({
+            configName: 'userData-' + window,
+            window: window,
+            defaults: config.defaults
+        }));
+    },
+
+    cleanStoreData: function (window) {
+        let store = config.stores.find(store => store.window === window);
+        if (store === undefined) {
+            console.log(`cleanStoreData failed ${window}`);
+            return;
+        }
+        store.set('vd_key', '');
+        store.set('act_token', '');
+    },
+
+    getStore: function (window) {
+        let store = config.stores.find(store => store.window === window);
+        if (!store && window !== undefined) {
+            config.createStore(window);
+        }
+        return config.stores.find(store => store.window === window);
+    },
+
+    debug: false,
+
+    params: function (window) {
+        return config.getStore(window);
+    },
+
+    sand_box: false,
+
+    appdata: 'appdata',
+
     session: {
         base_url: ''
-    },
-    params: {
-        set: (key, val) => localStorage.setItem(key, val),
-        get: (key) => { return localStorage.getItem(key) }
     }
 };
 
@@ -1861,5 +1976,6 @@ wtm = {
 }
 
 wtm.init(document);
+config.init();
 
 //module.exports = wtm;
